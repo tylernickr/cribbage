@@ -1,3 +1,6 @@
+from itertools import combinations
+
+
 class StandardRules(object):
 
     class Messages(object):
@@ -26,11 +29,8 @@ class StandardRules(object):
             except:
                 raise RuntimeError(StandardRules.Messages.INVALID_CARD + ': ' + str(card))
 
-    # Scores only this particular combination of cards
-    # Does not score all possible subsets of the cards (AKA the "hand")
-    # Should be used within the function for scoring a whole hand
     @staticmethod
-    def get_card_score(cards, up_card):
+    def get_hand_score(cards, up_card):
         score = 0
         score += StandardRules.get_pair_score(cards)
         score += StandardRules.get_run_score(cards)
@@ -41,42 +41,61 @@ class StandardRules(object):
 
     @staticmethod
     def get_pair_score(cards):
-        if len(cards) == 2:
-            card1val, card2val = [StandardRules.get_numeric_card_value(card) for card in cards]
-            if card1val == card2val:
-                return 2
-        return 0
+        return StandardRules.get_pair_count(cards) * 2
+
+    @staticmethod
+    def get_pair_count(cards):
+        pair_count = 0
+        for i in range(len(cards)):
+            first_card = cards[i]
+            remaining_cards = cards[i+1:]
+            for second_card in remaining_cards:
+                if first_card.get_value() == second_card.get_value():
+                    pair_count += 1
+        return pair_count
 
     @staticmethod
     def get_run_score(cards):
-        if len(cards) > 2:
-            card_values = [StandardRules.get_card_order_value(card) for card in cards]
-            card_values.sort()
-            while len(card_values) > 1:
-                if card_values[-1] - card_values[-2] != 1:
-                    return 0
-                card_values.pop()
-            return len(cards)
+        longest_run = 0
+        current_run = 0
+        card_values = [StandardRules.get_card_order_value(card) for card in cards]
+        card_values.sort()
+        for i in range(len(card_values)-1):
+            current_card_val = card_values[i]
+            next_card_val = card_values[i+1]
+            if next_card_val - current_card_val == 1:
+                current_run += 1
+                longest_run = max(longest_run, current_run)
+            else:
+                current_run = 0
+        if longest_run > 2:
+            return longest_run
         else:
             return 0
 
     @staticmethod
     def get_fifteen_score(cards):
-        if sum([StandardRules.get_numeric_card_value(card) for card in cards]) == 15:
-            return 2
-        else:
-            return 0
+        all_card_combos = []
+        for i in range(2, len(cards)+1):
+            for combo in combinations(cards, i):
+                all_card_combos.append(combo)
+        score = 0
+        for combo in all_card_combos:
+            if sum([StandardRules.get_numeric_card_value(card) for card in combo]) == 15:
+                score += 2
+            else:
+                score += 0
+        return score
 
     @staticmethod
     def get_flush_score(cards, up_card):
-        cards = [card for card in cards if card != up_card]
-        if len(cards) < 4:
-            return 0
-        while len(cards) > 1:
-            if cards[-1].get_suit() != cards[-2].get_suit():
+        cards = [card for card in cards if card != up_card]  # Exclude up card
+        for i in range(0, len(cards)-1):
+            first_card = cards[i]
+            second_card = cards[i+1]
+            if first_card.get_suit() != second_card.get_suit():
                 return 0
-            cards.pop()
-        if cards[0].get_suit() == up_card.get_suit():
+        if up_card.get_suit() == cards[0].get_suit():
             return 5
         else:
             return 4
@@ -87,17 +106,5 @@ class StandardRules(object):
             if card.get_value() == 'J' and card.get_suit() == up_card.get_suit():
                 return 1
         return 0
-
-    @staticmethod
-    def _get_hand_superset(cards):
-        if len(cards) == 0:
-            return [[]]
-        else:
-            superset = []
-            for i in range(len(cards)):
-                subset = [cards[i]]
-                subset += StandardRules._get_hand_superset(cards[:i] + cards[i+1:])
-                superset += subset
-            return superset
 
 
