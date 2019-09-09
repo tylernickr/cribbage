@@ -18,6 +18,8 @@ class GameManager(object):
         self.player1.set_position(1)
         self.player2.set_position(2)
         while not self.victory():
+            self.player1.new_round()
+            self.player2.new_round()
             self.play_round()
             self.rounds += 1
 
@@ -40,10 +42,9 @@ class GameManager(object):
         # Set the communal card
         up_card = self.deck.draw()
         dealer.peg(self.board, StandardRules.get_cut_jack_score(up_card))
-        print(self.board)
 
         # Set the crib
-        # crib = non_dealer.place_crib_cards() + dealer.place_crib_cards()
+        crib = non_dealer.place_crib_cards() + dealer.place_crib_cards()
 
     def victory(self):
         return StandardRules.p1_victory(self.board) or StandardRules.p2_victory(self.board)
