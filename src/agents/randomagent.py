@@ -1,4 +1,5 @@
 from random import randint
+from rules import StandardRules
 
 
 class RandomAgent(object):
@@ -7,6 +8,7 @@ class RandomAgent(object):
 
     def __init__(self):
         self.hand = []
+        self.played_cards = []
         self.position = None
 
     def draw_card(self, deck):
@@ -30,6 +32,17 @@ class RandomAgent(object):
         else:
             board.peg_p2(spaces)
 
+    def play_card(self, cards):
+        tot_count = sum([StandardRules.get_numeric_card_value(card) for card in cards])
+        playable_cards = [card for card in self.hand if card not in self.played_cards]
+        playable_cards = [card for card in playable_cards if 31 - tot_count >= StandardRules.get_numeric_card_value(card)]
+        if len(playable_cards) == 0:
+            return None
+        else:
+            card_to_play = playable_cards.pop(randint(0, len(playable_cards) - 1))
+            self.played_cards.append(card_to_play)
+            return card_to_play
+
     def new_round(self):
         self.hand = []
-        self.position = None
+        self.played_cards = []

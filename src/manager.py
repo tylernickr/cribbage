@@ -18,6 +18,7 @@ class GameManager(object):
         self.player1.set_position(1)
         self.player2.set_position(2)
         while not self.victory():
+            print(self.board)
             self.player1.new_round()
             self.player2.new_round()
             self.play_round()
@@ -45,6 +46,28 @@ class GameManager(object):
 
         # Set the crib
         crib = non_dealer.place_crib_cards() + dealer.place_crib_cards()
+
+        # "The Play" phase
+        last_card = None
+        played_cards = []
+        current_stack = []
+        active_player = non_dealer
+        inactive_player = dealer
+        while len(played_cards) < 8:
+            played_card = active_player.play_card(current_stack)
+            if played_card is not None:
+                played_cards.append(played_card)
+                current_stack.append(played_card)
+                if sum([StandardRules.get_numeric_card_value(card) for card in current_stack]) == 31:
+                    active_player.peg(self.board, StandardRules.get_thirtyone_score())
+                    current_stack = []
+            else:
+                if last_card is None:
+                    active_player.peg(self.board, StandardRules.get_last_card_score())
+                    current_stack = []
+
+            last_card = played_card
+            active_player, inactive_player = inactive_player, active_player
 
     def victory(self):
         return StandardRules.p1_victory(self.board) or StandardRules.p2_victory(self.board)

@@ -115,6 +115,14 @@ class StandardRules(object):
             return 0
 
     @staticmethod
+    def get_thirtyone_score():
+        return 2
+
+    @staticmethod
+    def get_last_card_score():
+        return 1
+
+    @staticmethod
     def p1_victory(board):
         return board.get_p1_position() < 0
 
