@@ -107,4 +107,19 @@ class StandardRules(object):
                 return 1
         return 0
 
+    @staticmethod
+    def get_cut_jack_score(card):
+        if card.get_value() == 'J':
+            return 2
+        else:
+            return 0
+
+    @staticmethod
+    def p1_victory(board):
+        return board.get_p1_position() < 0
+
+    @staticmethod
+    def p2_victory(board):
+        return board.get_p2_position() < 0
+
 
