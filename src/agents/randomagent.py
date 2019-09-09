@@ -10,6 +10,7 @@ class RandomAgent(object):
         self.hand = []
         self.played_cards = []
         self.position = None
+        self.wins = 0
 
     def draw_card(self, deck):
         self.hand.append(deck.draw())
@@ -39,10 +40,19 @@ class RandomAgent(object):
         if len(playable_cards) == 0:
             return None
         else:
-            card_to_play = playable_cards.pop(randint(0, len(playable_cards) - 1))
+            card_to_play = playable_cards.   pop(randint(0, len(playable_cards) - 1))
             self.played_cards.append(card_to_play)
             return card_to_play
 
     def new_round(self):
         self.hand = []
         self.played_cards = []
+
+    def win(self):
+        self.wins += 1
+
+    def get_wins(self):
+        return self.wins
+
+    def lose(self):
+        pass
