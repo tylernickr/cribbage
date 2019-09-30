@@ -41,9 +41,14 @@ class GameManager(object):
             non_dealer = self.player1
 
         # Get player hands for the round
+        non_dealer_hand = []
+        dealer_hand = []
         for i in range(6):
-            non_dealer.draw_card(self.deck)
-            dealer.draw_card(self.deck)
+            non_dealer_hand.append(self.deck.draw())
+            dealer_hand.append(self.deck.draw())
+
+        non_dealer.set_hand(non_dealer_hand)
+        dealer.set_hand(dealer_hand)
 
         # Set the communal card
         up_card = self.deck.draw()

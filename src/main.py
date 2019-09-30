@@ -1,9 +1,12 @@
 from agents.randomagent import RandomAgent
+from agents.besthandagent import BestHandAgent
 from manager import GameManager
 
 if __name__ == '__main__':
     game_manager = GameManager()
-    player1 = RandomAgent()
+
+    # Set player 1 and player 2 to the agents you wish to play against eachother
+    player1 = BestHandAgent()  # or RandomAgent()...
     player2 = RandomAgent()
     for i in range(1000):
         if i % 2 == 0:

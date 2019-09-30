@@ -1,37 +1,23 @@
 from random import randint
 from rules import StandardRules
+from agents.baseagent import BaseAgent
 
 
-class RandomAgent(object):
-    PLAYER_ONE = 1
-    PLAYER_TWO = 2
+class RandomAgent(BaseAgent):
+    """
+    This agent makes random decision at all points that are within the rules of the game.
+    """
 
     def __init__(self):
-        self.hand = []
+        super(RandomAgent, self).__init__()
         self.played_cards = []
-        self.position = None
         self.wins = 0
-
-    def draw_card(self, deck):
-        self.hand.append(deck.draw())
-
-    def get_hand(self):
-        return self.hand
 
     def place_crib_cards(self):
         crib_cards = []
         for i in range(2):
             crib_cards.append(self.hand.pop(randint(0, len(self.hand) - 1)))
         return crib_cards
-
-    def set_position(self, position):
-        self.position = position
-
-    def peg(self, board, spaces):
-        if self.position == RandomAgent.PLAYER_ONE:
-            board.peg_p1(spaces)
-        else:
-            board.peg_p2(spaces)
 
     def play_card(self, cards):
         tot_count = sum([StandardRules.get_numeric_card_value(card) for card in cards])

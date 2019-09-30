@@ -95,16 +95,17 @@ class StandardRules(object):
             second_card = cards[i+1]
             if first_card.get_suit() != second_card.get_suit():
                 return 0
-        if up_card.get_suit() == cards[0].get_suit():
+        if up_card and up_card.get_suit() == cards[0].get_suit():
             return 5
         else:
             return 4
 
     @staticmethod
     def get_rjack_score(cards, up_card):
-        for card in [card for card in cards if card != up_card]:
-            if card.get_value() == 'J' and card.get_suit() == up_card.get_suit():
-                return 1
+        if up_card:
+            for card in [card for card in cards if card != up_card]:
+                if card.get_value() == 'J' and card.get_suit() == up_card.get_suit():
+                    return 1
         return 0
 
     @staticmethod
